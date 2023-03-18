@@ -1,51 +1,80 @@
 "use client";
-import React, { useState } from "react";
 
-// WebSocketの接続先URLを定義
-const WEBSOCKET_URL = "wss://your-websocket-api-url";
+import { Flex } from "@chakra-ui/react";
+import type { NextPage } from "next";
+import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import Chat from "./components/Chat";
+import InputForm from "./components/InputForm";
+import { Message } from "./types/custom";
+import ThreeDotsLoader from "./components/ThreeDotsLoader";
+import { siteTitle, system_prompt } from "./constants/constants";
 
-const InputForm: React.FC = () => {
-  const [inputText, setInputText] = useState("");
+const Home: NextPage = () => {
+  const [chats, setChats] = useState<Message[]>([
+    {
+      role: "system",
+      content: system_prompt,
+    },
+  ]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputText(event.target.value);
-  };
+  const handleSubmit = async (message: Message) => {
+    try {
+      setIsSubmitting(true);
+      setChats((prev) => [...prev, message]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+      const response = await fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: [...chats, message].map((d) => ({
+            role: d.role,
+            content: d.content,
+          })),
+        }),
+      });
 
-    // WebSocketでサーバーにメッセージを送信
-    const socket = new WebSocket(WEBSOCKET_URL);
-    socket.addEventListener("open", () => {
-      socket.send(inputText);
-      setInputText("");
-    });
+      const data = await response.json();
+      if (response.status !== 200) {
+        throw (
+          data.error ||
+          new Error(`Request failed with status ${response.status}`)
+        );
+      }
+      setChats((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: data.result.content,
+        } as Message,
+      ]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <>
-      <div>
-        <h1 className="text-4xl">ロリスと世間話をする</h1>
+    <div className="w-full max-w-2xl bg-white md:rounded-lg md:shadow-md p-4 md:p-10 my-10">
+      <div className="mb-10">
+        <AnimatePresence>
+          {chats.slice(1, chats.length).map((chat, index) => {
+            return <Chat role={chat.role} content={chat.content} key={index} />;
+          })}
+        </AnimatePresence>
+        {isSubmitting && (
+          <Flex alignSelf="flex-start" px="2rem" py="0.5rem">
+            <ThreeDotsLoader />
+          </Flex>
+        )}
       </div>
-      <div className="flex justify-center">
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={inputText}
-            onChange={handleChange}
-            placeholder="メッセージを入力"
-            className="border-2 border-sky-300 px-12 py-12"
-          />
-          <button
-            type="submit"
-            className="bg-orange-400 text-white px-2 py-2 mx-10 rounded-xl"
-          >
-            送信
-          </button>
-        </form>
-      </div>
-    </>
+      <InputForm onSubmit={handleSubmit} />
+    </div>
   );
 };
 
-export default InputForm;
+export default Home;

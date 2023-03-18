@@ -1,17 +1,28 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
+import { Message } from "../types/custom";
 
 type InputFormProps = {
-  onSubmit: (message: string) => void;
+  onSubmit: (message: Message) => Promise<void>;
 };
 
-const InputForm: React.FC<InputFormProps> = ({ onSubmit }) => {
-  const [input, setInput] = useState("");
+const InputForm = (props: InputFormProps) => {
+  const { onSubmit } = props;
+
+  // input要素への参照を作成
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (input.trim()) {
-      onSubmit(input);
-      setInput("");
+
+    // input要素から直接値を取得
+    const inputValue = inputRef.current?.value;
+
+    if (inputValue) {
+      onSubmit({
+        role: "user",
+        content: inputValue,
+      });
+      inputRef.current.value = "";
     }
   };
 
@@ -22,8 +33,7 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit }) => {
     >
       <input
         type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
+        ref={inputRef}
         className="flex-grow px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
         placeholder="メッセージを入力..."
       />
