@@ -14,7 +14,7 @@ const Chat = ({ content, role }: Message) => {
 
   useEffect(() => {
     if (chatStringIndex.current < content.length - 1) {
-      const appendCharInterval = setInterval(appendChar, 50);
+      const appendCharInterval = setInterval(appendChar, 60);
       return () => clearInterval(appendCharInterval);
     }
   }, [chatMessage, chatStringIndex.current]);
