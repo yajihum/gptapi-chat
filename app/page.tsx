@@ -44,13 +44,7 @@ const Home: NextPage = () => {
           new Error(`Request failed with status ${response.status}`)
         );
       }
-      setChats((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: data.result.content,
-        } as Message,
-      ]);
+      setChats((prev) => [...prev, data.result as Message]);
     } catch (error) {
       console.log(error);
     } finally {

@@ -5,9 +5,7 @@ type InputFormProps = {
   onSubmit: (message: Message) => Promise<void>;
 };
 
-const InputForm = (props: InputFormProps) => {
-  const { onSubmit } = props;
-
+const InputForm = ({ onSubmit }: InputFormProps) => {
   // input要素への参照を作成
   const inputRef = useRef<HTMLInputElement>(null);
 
