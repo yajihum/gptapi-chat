@@ -4,20 +4,21 @@ import { motion } from "framer-motion";
 import { Message } from "../types/custom";
 
 const Chat = ({ content, role }: Message) => {
-  const chatStringIndex = useRef(0);
   const [chatMessage, setChatMessage] = useState("");
-
-  function appendChar() {
-    setChatMessage((prev) => prev + content[chatStringIndex.current]);
-    chatStringIndex.current++;
-  }
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    if (chatStringIndex.current < content.length - 1) {
-      const appendCharInterval = setInterval(appendChar, 100);
-      return () => clearInterval(appendCharInterval);
+    if (currentIndex < content.length) {
+      const timeoutId = setTimeout(() => {
+        setChatMessage((prevText) => prevText + content[currentIndex]);
+        setCurrentIndex((prevIndex) => prevIndex + 1);
+      }, 80);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
     }
-  }, [chatMessage, chatStringIndex.current]);
+  }, [content, currentIndex]);
 
   return (
     <motion.div
