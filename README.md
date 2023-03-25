@@ -1,38 +1,50 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ChatGPT APIを使ったWeb上で使えるチャットアプリ
 
-## Getting Started
+## 導入方法
+### 1. プロジェクトのルートディレクトリ直下に`.env.local`ファイルを作成
+`.env.local`ファイルを作成し、OpenAI APIのAPI keyを設定できるようにしておきます。
 
-First, run the development server:
+### 2. [OpenAI API](https://platform.openai.com/)のアカウント作成
+上記URLからアカウント作成をします
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+### 3. API keyを取得
+[ここから](https://platform.openai.com/account/api-keys)API keyの取得を行います。
+`+ Create new secret key`ボタンから新しい`SECRET KEY`を表示し、コピーをしておきます。
+
+### 4. 3で取得したAPI keyを1の`.env.local`に設定します
+以下のようにコピーしたAPI keyを右辺にペーストします。
+```
+OPENAI_API_KEY=xxxxxxxxx
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 5. システムプロンプトの設定
+話し相手であるGPTの振る舞いを指定するためのメッセージを設定します。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`/app/constants/constants.ts`に移動し、`system_prompt`変数に振る舞い方を書きます。
+例えば以下のような感じです。
+```
+export const system_prompt ="あなたはみんなに愛されるゆるキャラです。必ずタメ口で話すようにしてください。";
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+### 6. 好きなタイトルを設定する
+５と同じ`/app/constants/constants.ts`に、ヘッダーとして表示するサイトタイトルを好きなように設定します。
+```
+export const siteTitle = "ChatGPTとおしゃべり";
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+また、Metaの設定も自分の好きなようにできます。
+`/app/Layout.tsx`に移動し、`MetaData`を自分の好みにカスタムしてください。
+```
+export const metadata = {
+  title: "ChatGPTとおしゃべり🐒",
+  description:
+    "ChatGPT APIを使ったチャットアプリです。一緒におしゃべりが出来ます。",
+};
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### 7. デプロイを行う
+`Vercel`や`Netlify`など好きなホスティングサービスを使ってデプロイを行います。
+その際には以前行なっていたAPI keyの環境変数の設定を忘れないようにしてください。
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 不明点や質問がある場合
+[@yajium](https://twitter.com/yajium_)に直接ご連絡頂くか、このGithubリポジトリにissueを立てていただければ幸いです。

@@ -3,9 +3,9 @@ import Header from "./Header";
 import Main from "./Main";
 
 export const metadata = {
-  title: "ロリスとのおしゃべりタイム- 心地よいぬいぐるみとの時間🐒",
+  title: "ChatGPTとおしゃべり🐒",
   description:
-    "ChatGPT APIを使ったチャットアプリです。ロリスと一緒におしゃべりが出来ます。",
+    "ChatGPT APIを使ったチャットアプリです。一緒におしゃべりが出来ます。",
 };
 
 export default function RootLayout({

@@ -8,7 +8,7 @@ import Chat from "./components/Chat";
 import InputForm from "./components/InputForm";
 import { Message } from "./types/custom";
 import ThreeDotsLoader from "./components/ThreeDotsLoader";
-import { siteTitle, system_prompt } from "./constants/constants";
+import { system_prompt } from "./constants/constants";
 
 const Home: NextPage = () => {
   const [chats, setChats] = useState<Message[]>([
